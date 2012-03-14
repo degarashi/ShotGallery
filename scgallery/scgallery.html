@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<meta charset="utf-8">
+		<title>Image Gallery</title>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<!--<script src="jquery-1.7.1.min.js"></script>-->
+		<script type="text/javascript" src="scgallery.js"></script>
+		<script>
+			$(function(){
+				// getgroupの場所、グループフォルダ、表示場所
+				// path of PHP program, screenshot folder, target to show
+				g_SCG = new ScGallery("../getgroup.php", "scshot", $("body"));
+			});
+		</script>
+	</head>
+	<body>
+	</body>
+</html>

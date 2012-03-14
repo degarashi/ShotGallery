@@ -1,0 +1,170 @@
+@charset "UTF-8";
+.slc_DetailBox {
+	position: relative;
+	background-color:#333;
+	width: 640px;
+	height: 480px;
+	border: 2px solid #ccf;
+}
+.slc_DummySpace {
+	opacity: 0;
+	width: 0px;
+	height: 0px;
+	overflow: hidden;
+}
+.slc_PictureBox {
+	position: absolute;
+	max-width: 640px;
+	max-height: 480px;
+	top: 50%;
+	left: 50%;
+}
+.slc_Overlay {
+	position: absolute;				
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	color: #fff;
+}
+.slc_Caption {
+	position: absolute;
+	width: 100%;
+	height: 80px;
+	top: 398px;
+	color: #fff;
+	text-align: center;
+	background-color: transparent;
+	border-top: 2px solid;
+	border-color: #999;
+}
+.slc_CaptionBkg {
+	position: absolute;
+	background-color: #000;
+	width: 100%;
+	height: 100%;
+	opacity: 0.5;
+	z-index: 0;
+}
+.slc_Title {
+	position: relative;
+	background-color: transparent;
+	font-weight: 700;
+	font-style: italic;
+	height: 18px;
+}
+.slc_TitleBkg {
+	position: absolute;
+	background-color: #777;
+	width: 100%;
+	height: 18px;
+	opacity: 0.3;
+}
+.slc_Comment {
+	position: relative;
+	background-color: transparent;
+}
+.slc_Loading {
+	position: absolute;
+	width: 64px;
+	height: 64px;
+	opacity: 0.8;
+	background-color: #fff;
+	border-radius: 12px;
+}
+
+.slc_PN, .slc_SC {
+	position:absolute;
+	background-color: #000;
+	border-radius: 6px;
+}
+.slc_PN {
+	width: 48px;
+	height: 48px;
+}
+.slc_SC {
+	width: 32px;
+	height: 32px;
+}
+/* 前へボタン */
+.slc_Prev {
+	top: 220px;
+	left: 20px;
+}
+/* 次へボタン */
+.slc_Next {
+	top: 220px;
+	left: 560px;
+}
+/* 等倍表示 */
+.slc_Noscale {
+	top: 360px;
+	left: 10px;
+}
+/* フィット表示 */
+.slc_Fit {
+	top: 360px;
+	left: 42px;
+}
+
+.slc_ThumbPanel {
+	position: relative;
+	width: 640px;
+}
+.slc_GroupSel {
+	width: 140px;
+}
+.slc_ThumbSel {
+	position: absolute;
+	background-color: #44f;
+	border: #00f 1px solid;
+	opacity: 0.5;
+	width: 96px;
+	height: 66px;
+	z-index: 2;
+}
+.slc_Thumbnail {
+	position: relative;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	overflow: auto;
+	max-height: 210px;
+	max-width: 640px;
+	/*white-space:nowrap;*/
+}
+.slc_GroupTitle {
+	border:1px solid;
+	border-color:#ccc;
+	text-align: center;
+}
+.slc_ThumbBox, .slc_ThumbBoxH {
+	position: relative;
+	margin-left: 4px;
+	margin-right: 4px;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	width: 92px;
+	height: 64px;
+	max-height: 64px;
+	z-index: 1;
+}
+.slc_ThumbBox:hover {
+	margin-left: 3px;
+	margin-right: 3px;
+	margin-top: 1px;
+	margin-bottom: 1px;
+
+	border: 1px solid #008;
+}
+
+.slc_ThumbBoxH {
+	float: left;
+	border: 1px dotted;
+}
+
+.slc_Loading_s {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+}

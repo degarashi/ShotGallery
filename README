@@ -1,0 +1,68 @@
+<ShotGallery>
+About This program:
+a screenshot-gallery. this can put screenshot-gallery window in HTML.
+asynclonous image loading and auto-resizing(not yet) supported.
+for my leaning of javascript, php...
+
+Licence:
+some rights reserved..
+Creative Commons
+http://creativecommons.org/licenses/by-sa/3.0/
+
+Sample:
+here is sample gallery.you can check this program how it works.
+http://www40.atpages.jp/~slice/scgallery/
+
+Directory tree:
+/
+- getgroup.php			the program witch scans directories and image files
+- scgallery/
+  - scgallery.html		the HTML that imports screenshot gallery
+  - scgallery.css		CSS for scgallery.html
+  - scgallery.js		main program
+  - loading.gif			loading icon
+  - loading_s.gif		loading icon for thumbnail window
+  - components.html		screenshot gallery's layout
+- my_images/			group root folder(any name)
+  - my_group/			group directory(any name)
+    - caption.json		comment file
+    - image.jpg			image file
+    - image_low.jpg		thumbnail image file(for image.jpg)
+    ...
+
+How to:
+place group root directory which includes image files and groups (in the above. "my_images")
+if you'd like to give comments(optional), create "caption.json" in group directory
+and write your comments like this
+{
+	"title": "group　no.1",
+	"mypc.jpg": ["my PC", "athlonX2 5600+ CPU. is that classic CPU at now?"],
+	"smiley_face.jpg": ["smile", "How very beautiful smiley face!"]
+}
+set group's title to "title" entry.
+and add comment-entry in this format
+"image_filename": ["title of image", "comment of image"]
+as much as necessary.
+
+thumbnail image file is not required but should prepared.
+then, write some javascript codes in main-html
+$(function(){
+	g_SCG = new ScGallery("../getgroup.php", "my_images", $("body"));
+});
+(yes, $ is jQuery)
+the first argument is the path to "getgroup.php",
+second is the path to group root folder from "getgroup.php"
+and the last is jQueryObject where you'd like to show.
+
+Note:
+this program is still in progress so there are some bugs, constraints like here
+- getgroup.php scans directories every time. this should be wasting server resource over than it's needed
+- image shows always at 640x480 resolution. larger images is resized
+- overlay button's icon has not available yet. and "resize" buttons are not functional.
+- thumbnail file(ex. image_low.jpg) are should be same image format and have extension.
+- thumbnail images will be loaded simultaneously. this causes browser heavy when the group has many image files.
+- there is little error handlings
+- thumbnail are "alphabet" sorting only
+
+of course these are will be fixed.
+if you notice bugs or have any questions and suggestions, please email to me.
