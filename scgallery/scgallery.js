@@ -41,7 +41,7 @@ function WaitForLoadCentering(img, intv, parentObj, cf) {
  * baseDOM (insertion target) [jQ]
  * dom (DOM layout of ScGallery) [jQ]
  * basePath (image folder's root path) [string]
- * docPath (PHP program path for file enumeration) [string]
+ * docDir (PHP program directory for file enumeration) [string]
  * groups (folder / file list) [table]
  * item [table]
  *	dbox (detail box) [jQ]
@@ -74,6 +74,10 @@ function ScGallery(phpPath, groupPath, baseDOM) {
 	// query file list and DOM layout
 	$.get(phpPath, {folder: groupPath}, _recvG);
 	$.get("./component.html", {}, _recvCP);
+	
+	this.docPath = phpPath;
+	var path = phpPath.match(/(.+)(?:\/\w+\.php)/i);
+	this.docDir = path[1];
     
 	var self = this;
 	this.baseDOM = baseDOM;
@@ -92,9 +96,8 @@ function ScGallery(phpPath, groupPath, baseDOM) {
 		// ファイル/グループリストを受け取る
 		// receive file /folder list
 		eval("var dat=" + data);
-		self.groups = dat.files;
-		self.docPath = dat.docpath;
-		self.basePath = dat.basepath;
+		self.groups = dat;
+		self.basePath = self.docDir + "/" + self.groupPath;
 		_checkInitFlag(INITFLAG_GROUP);
 	}
 	function _recvCP(data, status) {
@@ -273,8 +276,8 @@ function ScGallery(phpPath, groupPath, baseDOM) {
 			self.active.name = groupName;
 			// Filesエントリに格納されたファイル名リストに大してクエリを送る
 			// query thumbnail image files in "files" entry
-			var files = self.groups[groupName];
-			var firstTB;
+			var g = self.groups[groupName];
+			var files = g.files;
 			for(var i=0 ; i<files.length ; i++) {
 				(function() {
 					var ai = i;
@@ -317,7 +320,7 @@ function ScGallery(phpPath, groupPath, baseDOM) {
 			// set as no thumbnail is selected
 			_refreshPic(-1);
 			
-			ttext = groupName;
+			ttext = g.title.length>0 ? g.title : groupName;
 		}
 		// サムネイルタイトルを反映 apply thumbnail group title
 		ttitle.fadeTo(0, 0).text(ttext).fadeTo("slow", 1);			
@@ -344,13 +347,12 @@ function ScGallery(phpPath, groupPath, baseDOM) {
 				
 				var loading = self.item.loading;
 				loading.stop(true,true).fadeIn("normal");
-				
 				// 一旦フェードアウトさせる
 				// fadeout current image first
 				pic.stop(true,true).fadeTo("fast", 0, function() {
 					// イメージの差し替えと中央寄せ
 					// swap image source and centering
-					var fInfo = g[imageIdx];
+					var fInfo = g.files[imageIdx];
 					pic.attr("src", "")
 						.attr("src", _makePath(fInfo.image));
 	

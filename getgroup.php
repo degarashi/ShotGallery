@@ -10,35 +10,31 @@
 	   
 	   output
 		{
-			"basepath": "",
-			"docpath": "",
-			"groups": {
-				"mygame": {
-					"title": "mygame's screenshot",
-					"files": [
-						{
-							"image": "title.jpg",
-							"thumb": "title_low.jpg",
-							"caption": "title screen",
-							"comment": "still in progress..."
-						},
-						{
-							"image": "leaderboard.jpg",
-							"thumb": "leaderboard_low.jpg",
-							"caption": "the leaderboard",
-							"comment": "you can check your rank"
-						}
-					]
-				},
-				"photo": {
-					"title": "photo of my travel",
-					"files": {
-						{
-							"image": "mt_fuji.jpg",
-							"thumb": "mt_fuji_low.jpg",
-							"caption": "Mount Fuji",
-							"comment": "highest mountain in Japan located on Honshu Island"
-						}
+			"mygame": {
+				"title": "mygame's screenshot",
+				"files": [
+					{
+						"image": "title.jpg",
+						"thumb": "title_low.jpg",
+						"caption": "title screen",
+						"comment": "still in progress..."
+					},
+					{
+						"image": "leaderboard.jpg",
+						"thumb": "leaderboard_low.jpg",
+						"caption": "the leaderboard",
+						"comment": "you can check your rank"
+					}
+				]
+			},
+			"photo": {
+				"title": "photo of my travel",
+				"files": {
+					{
+						"image": "mt_fuji.jpg",
+						"thumb": "mt_fuji_low.jpg",
+						"caption": "Mount Fuji",
+						"comment": "highest mountain in Japan located on Honshu Island"
 					}
 				}
 			}
@@ -88,22 +84,22 @@
 	function GetInfo($path, $depth, $json) {
 		global $EXT_ARRAY;
 		global $ext_strFile, $ext_strFileLOW, $ext_strFolder;
-		if($depth == 0) {
-			$ext_str = $ext_strFile;
-			$ext_strLOW = $ext_strFileLOW;
-		} else {
-			$ext_str = $ext_strFolder;
-		}
-		$result = array();
 		
+		$result = array();
 		$ar = scandir($path);
-		foreach($ar as $fname) {
-			if(preg_match($ext_str, $fname, $match)) {
-				if(strlen($fname) === strlen($match[0])) {
-					if($depth == 0) {
+		if($depth == 0) {			
+			$title = "";
+			if(!is_null($json))
+				$title = $json['title'];
+			$result['title'] = $title;
+			
+			$files = array();		
+			foreach($ar as $fname) {
+				if(preg_match($ext_strFile, $fname, $match)) {
+					if(strlen($fname) === strlen($match[0])) {
 						// サムネイル画像は無視
 						// skip thumbnail images
-						if(preg_match($ext_strLOW, $fname, $match) != 0)
+						if(preg_match($ext_strFileLOW, $fname, $match) != 0)
 							continue;
 
 						$ftbl = array();
@@ -128,8 +124,15 @@
 							$ftbl['caption'] = $jf[0];
 							$ftbl['comment'] = $jf[1];
 						}
-						$result[] = $ftbl;
-					} else {
+						$files[] = $ftbl;
+					}
+				}
+			}
+			$result['files'] = $files;
+		} else {
+			foreach($ar as $fname) {
+				if(preg_match($ext_strFolder, $fname, $match)) {
+					if(strlen($fname) === strlen($match[0])) {
 						$nextPath = $path . '/' . $fname;
 						
 						// もしJSONファイルがあったら読み込んで次の関数へ渡す
@@ -142,12 +145,13 @@
 							fclose($fp);
 							$json = json_decode($json, true);
 						}
-
+	
 						$result[$fname] = GetInfo($nextPath, $depth-1, $json);
 					}
 				}
 			}
 		}
+		
 		return $result;
 	}
 	
@@ -156,6 +160,7 @@
 	function HasPath($path, $cmp) {
 		return strlen(stristr($path, $cmp)) == strlen($path);
 	}
+
 	if(isset($_GET["folder"])) {
 		$result = array();
 		
@@ -163,17 +168,12 @@
 		// check requested path is under BASEPATH (for security)
 		$path = './' . $_GET['folder'];
 		if(HasPath($path, BASEPATH)) {
-			chdir(dirname($_SERVER['SCRIPT_NAME']));
+			chdir(dirname(__FILE__));
 			
 			// ファイルを列挙してJSONフォーマットで返す
 			// enumerate image files and return as JSON
 			$resF = GetInfo($path, 1);
-			$result['files'] = $resF;
-			$docdir = dirname($_SERVER['SCRIPT_NAME']);
-			$result['basepath'] = $docdir . '/' . $_GET["folder"];
-			$result['docpath'] = $docdir;
-
-			echo json_encode($result);
+			echo json_encode($resF);
 		}
 	}
 
