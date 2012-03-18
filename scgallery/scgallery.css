@@ -80,32 +80,32 @@
 	border-radius: 6px;
 }
 .slc_PN {
+	width: 64px;
+	height: 64px;
+}
+.slc_SC {
 	width: 48px;
 	height: 48px;
 }
-.slc_SC {
-	width: 32px;
-	height: 32px;
-}
 /* 前へボタン */
 .slc_Prev {
-	top: 220px;
+	top: 200px;
 	left: 20px;
 }
 /* 次へボタン */
 .slc_Next {
-	top: 220px;
+	top: 200px;
 	left: 560px;
 }
 /* 等倍表示 */
 .slc_Noscale {
-	top: 360px;
+	top: 340px;
 	left: 10px;
 }
 /* フィット表示 */
 .slc_Fit {
-	top: 360px;
-	left: 42px;
+	top: 340px;
+	left: 60px;
 }
 
 .slc_ThumbPanel {

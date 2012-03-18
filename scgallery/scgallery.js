@@ -207,21 +207,21 @@ function ScGallery(phpPath, groupPath, baseDOM) {
 	
 	// カーソルがピクチャボックスに入ったらキャプションと操作ボタンを表示
 	// setup events
-	dom.find(".slc_Overlay").hide();
+	dom.find(".slc_Overlay").fadeTo(0,0);
 	dom.find(".slc_DetailBox")
 		.mouseenter(function(){
 			_enableCapCounter(false);
 			var ov = $(this).find(".slc_Overlay");
-			ov.stop(true,true).fadeIn("fast");
+			ov.stop(true,true).fadeTo("fast", 1);
 		})
 		.mouseleave(function(){
 			_enableCapCounter(true);
 			var ov = $(this).find(".slc_Overlay");
-			ov.stop(true,true).fadeOut("fast");
+			ov.stop(true,true).fadeTo("fast", 0);
 		});
 	// カーソルが操作ボタンに乗ったら透明度を下げる
 	// when cursor overlapping, show control buttons
-	dom.find(".slc_DetailBox .slc_Ctrl *")
+	dom.find(".slc_DetailBox .slc_Ctrl *").not("object")
 		.each(function(){
 		var ths = $(this);
 		ths.css("opacity", "0.1")

@@ -172,7 +172,7 @@
 			
 			// ファイルを列挙してJSONフォーマットで返す
 			// enumerate image files and return as JSON
-			$resF = GetInfo($path, 1);
+			$resF = GetInfo($path, 1, null);
 			echo json_encode($resF);
 		}
 	}

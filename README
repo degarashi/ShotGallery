@@ -58,7 +58,7 @@ Note:
 this program is still in progress so there are some bugs, constraints like here
 - getgroup.php scans directories every time. this should be wasting server resource over than it's needed
 - image shows always at 640x480 resolution. larger images is resized
-- overlay button's icon has not available yet. and "resize" buttons are not functional.
+- overlay "resize" buttons are not functional.
 - thumbnail file(ex. image_low.jpg) are should be same image format and have extension.
 - thumbnail images will be loaded simultaneously. this causes browser heavy when the group has many image files.
 - there is little error handlings
