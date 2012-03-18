@@ -78,6 +78,7 @@
 	position:absolute;
 	background-color: #000;
 	border-radius: 6px;
+	overflow: hidden;
 }
 .slc_PN {
 	width: 64px;
