@@ -221,7 +221,7 @@ function ScGallery(phpPath, groupPath, baseDOM) {
 		});
 	// カーソルが操作ボタンに乗ったら透明度を下げる
 	// when cursor overlapping, show control buttons
-	dom.find(".slc_DetailBox .slc_Ctrl *").not("object")
+	dom.find(".slc_DetailBox .slc_Ctrl > *").not("object")
 		.each(function(){
 		var ths = $(this);
 		ths.css("opacity", "0.1")
@@ -234,13 +234,13 @@ function ScGallery(phpPath, groupPath, baseDOM) {
 	});
 	// 「前へ」
 	// previous picture
-	dom.find(".slc_Prev").click(function(){
+	dom.find(".slc_Prev > .slc_click").click(function() {
 		if(self.active.id > 0)
 			show("relative", -1);
 	});
 	// 「次へ」
 	// next picture
-	dom.find(".slc_Next").click(function(){
+	dom.find(".slc_Next > .slc_click").click(function(){
 		show("relative", 1);
 	});
 	// サムネイルグループが切り替えられたら次のを読み込む

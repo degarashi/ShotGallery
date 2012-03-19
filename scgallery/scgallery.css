@@ -96,6 +96,15 @@
 	top: 200px;
 	left: 20px;
 }
+.slc_click {
+	position: absolute;
+	background-color: #fff;
+	width: 100%;
+	height: 100%;
+	left: 0px;
+	top: 0px;
+	opacity: 0;
+}
 /* 次へボタン */
 .slc_Next {
 	top: 200px;
