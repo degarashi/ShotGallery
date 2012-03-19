@@ -80,6 +80,9 @@
 	border-radius: 6px;
 	overflow: hidden;
 }
+.slc_SC * {
+	overflow: hidden;
+}
 .slc_PN {
 	width: 64px;
 	height: 64px;

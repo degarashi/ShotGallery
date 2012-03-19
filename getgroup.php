@@ -54,6 +54,70 @@
 	    	"mt_fuji.jpg": ["Mount Fuji", "highest mountain in Japan located on Honshu Island"]
 	    }
 	*/
+	define('THUMBNAIL_WIDTH', 92);
+	define('THUMBNAIL_HEIGHT', 64);
+	
+	function GetExtension($path) {
+		if(preg_match("@\w+\.(\w+)@", basename($path), $match))
+			return $match[1];
+		return null;
+	}
+	function GetFileNameExt($path) {
+		if(preg_match("@(\w+)\.(\w+)@", $path, $match))
+			return array($match[1], $match[2]);
+		return null;
+	}
+	$loadimgf = array('jpg' => function($fname) { return imagecreatefromjpeg($fname); },
+			'jpeg' => function($fname) { return imagecreatefromjpeg($fname); },
+			'png' => function($fname) { return imagecreatefrompng($fname); },
+			'gif' => function($fname) { return imagecreatefromgif($fname); });
+	// 拡張子を識別し、適したロード関数を呼ぶ
+	function LoadImage($path) {
+		global $loadimgf;
+		return $loadimgf[GetExtension($path)]($path);
+	};
+	function GenerateThumbnail($img) {
+		$imglow = imagecreatetruecolor(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT);
+		$w = imagesx($img);
+		$h = imagesy($img);
+		if($w > $h)
+			$ratio = THUMBNAIL_WIDTH / $w;
+		else
+			$ratio = THUMBNAIL_HEIGHT / $h;
+		$loww = $w * $ratio;
+		$lowh = $h * $ratio;
+		
+		$ofsx = THUMBNAIL_WIDTH/2 - $loww/2;
+		$ofsy = THUMBNAIL_HEIGHT/2 - $lowh/2;
+		imagefill($imglow, 0,0, imagecolorallocate($imglow, 0,0,0));
+		imagecopyresampled($imglow, $img, $ofsx,$ofsy, 0,0, $loww, $lowh, $w, $h);
+		
+		return $imglow;
+	}
+	function GenerateThumbnails($basepath, &$files) {
+		$lowpath = $basepath . '/_low';
+		// lowディレクトリがなければ新規作成
+//		if(!file_exists($lowpath))
+//			mkdir($lowpath);
+		if(!file_exists($lowpath))
+			return;
+		
+		foreach($files as $index => $file) {
+			// サムネイルファイルパスを求める
+			$imagepath = $basepath . '/' . $file['image'];
+			list($fname, $fext) = GetFileNameExt($imagepath);
+			$thumbpath = $lowpath . '/' . $fname . '_low.png';
+			
+			// 既にサムネイルがあったら何もしない
+			if(!file_exists($thumbpath)) {
+				$thumb = GenerateThumbnail(LoadImage($imagepath));
+				imagepng($thumb, $thumbpath);
+			}
+			
+			$files[$index]['thumb'] = '_low/' . $fname . '_low.png';
+		}
+	}
+
 	// ベースパス以下のパスが検索対象
 	// this program allows to scan the path under BASEPATH
 	define('BASEPATH', './');
@@ -128,6 +192,7 @@
 					}
 				}
 			}
+			GenerateThumbnails($path, $files);
 			$result['files'] = $files;
 		} else {
 			foreach($ar as $fname) {
@@ -154,7 +219,6 @@
 		
 		return $result;
 	}
-	
 	// $cmpが$pathの先頭にあるか？
 	// is $cmp at the first-place of $path ?
 	function HasPath($path, $cmp) {
