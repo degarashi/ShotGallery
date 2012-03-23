@@ -57,16 +57,16 @@
      inkscape:pageopacity="1.0"
      inkscape:pageshadow="0"
      inkscape:zoom="2.3043897"
-     inkscape:cx="16.557001"
-     inkscape:cy="55.504705"
+     inkscape:cx="36.518902"
+     inkscape:cy="32.939077"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer2"
      id="namedview2997"
      showgrid="false"
-     inkscape:window-width="1525"
-     inkscape:window-height="960"
-     inkscape:window-x="111"
-     inkscape:window-y="55"
+     inkscape:window-width="967"
+     inkscape:window-height="707"
+     inkscape:window-x="199"
+     inkscape:window-y="54"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata2999">
@@ -80,6 +80,18 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Background">
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       id="rect2992"
+       width="64"
+       height="64"
+       x="0"
+       y="3.5527137e-15" />
+  </g>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"

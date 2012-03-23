@@ -310,7 +310,7 @@
      inkscape:cx="58.426344"
      inkscape:cy="24.3874"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer2"
      id="namedview2997"
      showgrid="false"
      inkscape:window-width="1507"
@@ -331,10 +331,24 @@
     </rdf:RDF>
   </metadata>
   <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Background"
+     style="display:inline">
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       id="rect3164"
+       width="48"
+       height="48"
+       x="0"
+       y="0" />
+  </g>
+  <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-1004.3622)">
+     transform="translate(0,-1004.3622)"
+     style="display:inline">
     <path
        style="fill:none;stroke:#ffffff;stroke-width:2.91226006;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="m 4.4184495,1016.6421 0,-7.5799 8.0426985,0"
