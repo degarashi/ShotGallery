@@ -36,6 +36,13 @@ function Centering(img, parentObj, bScale) {
 	});
 }
 
+function CountEntries(obj) {
+	var count = 0;
+	for(var i in obj)
+		++count;
+	return count;
+}
+	
 /// ScreenShot Gallery
 /**
  * -------- FIELDS --------
@@ -57,6 +64,8 @@ function Centering(img, parentObj, bScale) {
  *	comment (image comment) [jQ]
  * 	capdiv (caption window) [jQ]
  *	dummy (hidden space for loading image) [jQ]
+ *  noscale (noscaling button) [jQ]
+ *  fit (fit button) [jQ]
  *
  * capCounter (caption remaining time) [number]
  * bDeclCap (decrease capCounter or not) [bool]
@@ -86,7 +95,18 @@ function ScGallery(phpPath, groupPath, baseDOM) {
 	this.groupPath = groupPath;
 	this.capCounter = 0;
 	this.bDeclCap = true;
-	this.bScaling = true;
+	
+	function _switchScaling(bS) {
+		self.bScaling = bS;
+		if(bS) {
+			self.item.noscale.width(48);
+			self.item.fit.width(0);
+		} else {
+			self.item.noscale.width(0);
+			self.item.fit.width(48);
+		}
+		_refreshPic(self.active.id, true);
+	}
 	
 	this.active = {
 		name: null,
@@ -138,207 +158,220 @@ function ScGallery(phpPath, groupPath, baseDOM) {
     }
     /// コメント表示残り時間の減算をオンオフ switch comment window remaining time decreasing
     function _enableCapCounter(bDecl) {
-	self.bDeclCap = bDecl;
-	var cd = self.item.capdiv;
-	if(!bDecl)
-		cd.fadeIn("fast");
-	else if(self.capCounter <= 0)
-		cd.fadeOut("fast");
+		self.bDeclCap = bDecl;
+		var cd = self.item.capdiv;
+		if(!bDecl)
+			cd.fadeIn("fast");
+		else if(self.capCounter <= 0)
+			cd.fadeOut("fast");
     }
 	
     /// ディティールウィンドウに出すローディングアイコンを初期化 initialize Large-LoadingIcon for detail-window
     function _initLoadingIcon() {
     	var img = $("<img>", {"alt": "loading-icon"});
- 	var divLoad = self.item.loading
- 				.css("visibility", "hidden")
-				.append(img);
-	var db = self.item.dbox;
+		var divLoad = self.item.loading
+					.css("visibility", "hidden")
+					.append(img);
+		var db = self.item.dbox;
 	
-	// 読み込みが終わったらparentObj領域の中央にオブジェクトを配置
-	// place "LoadingIcon" at center when image object ready
-	img.load(function() {
-		Centering(img, divLoad, false);
-		var posx = parseInt(db.css("width"))/2 - parseInt(divLoad.css("width"))/2,
-			posy = parseInt(db.css("height"))/2 - parseInt(divLoad.css("height"))/2;
-		divLoad.css("left", posx+"px")
-			.css("top", posy+"px")
-			.fadeOut(0)
-			.css("visibility", "visible");
-	})
-	.attr("src", "icon/loading.gif");
+		// 読み込みが終わったらparentObj領域の中央にオブジェクトを配置
+		// place "LoadingIcon" at center when image object ready
+		img.load(function() {
+			Centering(img, divLoad, false);
+			var posx = parseInt(db.css("width"))/2 - parseInt(divLoad.css("width"))/2,
+				posy = parseInt(db.css("height"))/2 - parseInt(divLoad.css("height"))/2;
+			divLoad.css("left", posx+"px")
+				.css("top", posy+"px")
+				.fadeOut(0)
+				.css("visibility", "visible");
+		})
+		.attr("src", "icon/loading.gif");
     }
 
     /// サムネイル枠と、中心で回るくるくる画像 initialize Small-LoadingIcon for thumbnail
     function _initLoadingRect() {
-	var img = $("<img>", {
-		"src": "icon/loading_s.gif",
-		 "class": "slc_Loading_s"
-	});
-	var divLS = $("<div>", {
-		"class": "slc_ThumbBoxH",
-		"alt": "thumb"
-	});
-	self.item.loading_rect = divLS.append(img);
-	divLS.fadeTo(0,0).appendTo(self.item.dummy);
-	img.load(function() {
-		Centering(img, divLS, false);
-	});
+		var img = $("<img>", {
+			"src": "icon/loading_s.gif",
+			 "class": "slc_Loading_s"
+		});
+		var divLS = $("<div>", {
+			"class": "slc_ThumbBoxH",
+			"alt": "thumb"
+		});
+		self.item.loading_rect = divLS.append(img);
+		divLS.fadeTo(0,0).appendTo(self.item.dummy);
+		img.load(function() {
+			Centering(img, divLS, false);
+		});
     }
 	
     /// グループセレクタを用意 initialize group selector
     function _initGroupList() {
-	var sel = self.dom.find(".slc_GroupSel > select");
-	sel.append($("<option>", {text: "--- select group ---"}));
-	for(var i in self.groups) {
-		var g = self.groups[i];
-		sel.append($("<option>", {text: i}));
-	}
+		var sel = self.dom.find(".slc_GroupSel > select");
+		sel.append($("<option>", {text: "--- select group ---"}));
+		for(var i in self.groups) {
+			var g = self.groups[i];
+			sel.append($("<option>", {text: i}));
+		}
     }
     
     function _init() {
-	// レイアウト追加
-	// append DOM-layout to target
-	var dom = self.baseDOM;
-	dom.append(self.dom);
-
-	// よく使うオブジェクトをストック stock frequency used elements
-	self.item = {
-		dbox: dom.find(".slc_DetailBox"),
-		pic: dom.find(".slc_PictureBox"),
-		sel: dom.find(".slc_ThumbSel"),
-		tbar: dom.find(".slc_Thumbnail"),
-		ttitle: dom.find(".slc_GroupTitle>div"),
-		loading: dom.find(".slc_Loading"),
-		caption: dom.find(".slc_Title"),
-		comment: dom.find(".slc_Comment"),
-		capdiv: dom.find(".slc_Caption"),
-		dummy: dom.find(".slc_DummySpace")
-	};
+		// レイアウト追加
+		// append DOM-layout to target
+		var dom = self.baseDOM;
+		dom.append(self.dom);
 	
-	// カーソルがピクチャボックスに入ったらキャプションと操作ボタンを表示
-	// setup events
-	dom.find(".slc_Overlay").fadeTo(0,0);
-	dom.find(".slc_DetailBox")
-		.mouseenter(function(){
-			_enableCapCounter(false);
-			var ov = $(this).find(".slc_Overlay");
-			ov.stop(true,true).fadeTo("fast", 1);
-		})
-		.mouseleave(function(){
-			_enableCapCounter(true);
-			var ov = $(this).find(".slc_Overlay");
-			ov.stop(true,true).fadeTo("fast", 0);
+		// よく使うオブジェクトをストック stock frequency used elements
+		self.item = {
+			dbox: dom.find(".slc_DetailBox"),
+			pic: dom.find(".slc_PictureBox"),
+			sel: dom.find(".slc_ThumbSel"),
+			tbar: dom.find(".slc_Thumbnail"),
+			ttitle: dom.find(".slc_GroupTitle>div"),
+			loading: dom.find(".slc_Loading"),
+			caption: dom.find(".slc_Title"),
+			comment: dom.find(".slc_Comment"),
+			capdiv: dom.find(".slc_Caption"),
+			dummy: dom.find(".slc_DummySpace"),
+			noscale: dom.find(".slc_Noscale"),
+			fit: dom.find(".slc_Fit")
+		};
+		
+		// カーソルがピクチャボックスに入ったらキャプションと操作ボタンを表示
+		// setup events
+		dom.find(".slc_Overlay").fadeTo(0,0);
+		dom.find(".slc_DetailBox")
+			.mouseenter(function(){
+				_enableCapCounter(false);
+				var ov = $(this).find(".slc_Overlay");
+				ov.stop(true,true).fadeTo("fast", 1);
+			})
+			.mouseleave(function(){
+				_enableCapCounter(true);
+				var ov = $(this).find(".slc_Overlay");
+				ov.stop(true,true).fadeTo("fast", 0);
+			});
+		// カーソルが操作ボタンに乗ったら透明度を下げる
+		// when cursor overlapping, show control buttons
+		dom.find(".slc_DetailBox .slc_Ctrl > *").not("object")
+			.each(function(){
+			var ths = $(this);
+			ths.css("opacity", "0.1")
+			.mouseenter(function(){
+				ths.stop(true,true).fadeTo("fast", 1);
+			})
+			.mouseleave(function(){
+				ths.stop(true,true).fadeTo("fast", 0.1);
+			});
 		});
-	// カーソルが操作ボタンに乗ったら透明度を下げる
-	// when cursor overlapping, show control buttons
-	dom.find(".slc_DetailBox .slc_Ctrl > *").not("object")
-		.each(function(){
-		var ths = $(this);
-		ths.css("opacity", "0.1")
-		.mouseenter(function(){
-			ths.stop(true,true).fadeTo("fast", 1);
-		})
-		.mouseleave(function(){
-			ths.stop(true,true).fadeTo("fast", 0.1);
+		// 「等倍表示」
+		// disable zoom
+		dom.find(".slc_Noscale > .slc_click").click(function() {
+			_switchScaling(false);
 		});
-	});
-	// 「前へ」
-	// previous picture
-	dom.find(".slc_Prev > .slc_click").click(function() {
-		if(self.active.id > 0)
-			show("relative", -1);
-	});
-	// 「次へ」
-	// next picture
-	dom.find(".slc_Next > .slc_click").click(function(){
-		show("relative", 1);
-	});
-	// サムネイルグループが切り替えられたら次のを読み込む
-	// when thumbnail group changed, load next group
-	dom.find(".slc_GroupSel>select").change(function(e){
-		var v = e.target;
-		var op = v.options[v.selectedIndex];
-		_refreshThumbWindow(op.value);
-	});
+		// 「拡大表示」
+		// enable zoom
+		dom.find(".slc_Fit > .slc_click").click(function() {
+			_switchScaling(true);
+		});
+		// 「前へ」
+		// previous picture
+		dom.find(".slc_Prev > .slc_click").click(function() {
+			if(self.active.id > 0)
+				show("relative", -1);
+		});
+		// 「次へ」
+		// next picture
+		dom.find(".slc_Next > .slc_click").click(function(){
+			show("relative", 1);
+		});
+		// サムネイルグループが切り替えられたら次のを読み込む
+		// when thumbnail group changed, load next group
+		dom.find(".slc_GroupSel>select").change(function(e){
+			var v = e.target;
+			var op = v.options[v.selectedIndex];
+			_refreshThumbWindow(op.value);
+		});
 	
-	self.item.capdiv.fadeOut(0);
-	_initLoadingIcon();
-	_initLoadingRect();
-	_initGroupList();
+		self.item.capdiv.fadeOut(0);
+		_initLoadingIcon();
+		_initLoadingRect();
+		_initGroupList();
+		_switchScaling(false);
     }
     function _makePath(imageName) {
-	return self.basePath + "/" + self.active.name + "/" + imageName;
+    	return self.basePath + "/" + self.active.name + "/" + imageName;
     }
 
     /// サムネイル欄を更新 refresh thumbnails
     function _refreshThumbWindow(groupName) {
-	var tbar = self.item.tbar
-	var ttitle = self.item.ttitle
-	var sel = self.item.sel
-	var ttext = ""
-	// 一度バーをたたんで、読み込み予約してから広げる
-	// slideup thumbnail window and queueing next thumbnail group
-	tbar.slideUp("fast", function() {
-		sel.hide();
-		tbar.children(".slc_ThumbBox").remove();
-
-		if(groupName in self.groups) {
-			self.active.name = groupName;
-			// Filesエントリに格納されたファイル名リストに大してクエリを送る
-			// query thumbnail image files in "files" entry
-			var g = self.groups[groupName];
-			var files = g.files;
-			for(var i=0 ; i<files.length ; i++) {
-				(function() {
-					var ai = i;
-					var fInfo = files[ai];
-					var imageName = ("thumb" in fInfo) ? fInfo.thumb : fInfo.image;
-					var p = _makePath(imageName);
-					var img = $("<img>", {
-						"src": p,
-						"alt": "thumb",
-						"class": "slc_ThumbBox"
-					});
-					var c_eve = function() {
-						self.active.thumb = img;
-						_refreshPic(ai);
-					};
-					img.fadeTo(0,0);
-					self.item.dummy.append(img);
+		var tbar = self.item.tbar
+		var ttitle = self.item.ttitle
+		var sel = self.item.sel
+		var ttext = ""
+		// 一度バーをたたんで、読み込み予約してから広げる
+		// slideup thumbnail window and queueing next thumbnail group
+		tbar.slideUp("fast", function() {
+				sel.hide();
+				tbar.children(".slc_ThumbBox").remove();
+		
+				if(groupName in self.groups) {
+					self.active.name = groupName;
+					// Filesエントリに格納されたファイル名リストに大してクエリを送る
+					// query thumbnail image files in "files" entry
+					var g = self.groups[groupName];
+					var files = g.files;
+					for(var i=0 ; i<files.length ; i++) {
+						(function() {
+							var ai = i;
+							var fInfo = files[ai];
+							var imageName = ("thumb" in fInfo) ? fInfo.thumb : fInfo.image;
+							var p = _makePath(imageName);
+							var img = $("<img>", {
+								"src": p,
+								"alt": "thumb",
+								"class": "slc_ThumbBox"
+							});
+							var c_eve = function() {
+								self.active.thumb = img;
+								_refreshPic(ai, false);
+							};
+							img.fadeTo(0,0);
+							self.item.dummy.append(img);
+							
+							// まずはプレースホルダを配置
+							// prepare place-holder
+							var p_holder = self.item.loading_rect.clone();
+							p_holder.fadeTo(0,1).appendTo(tbar);
+							img.load(function() {
+								// サムネイルプレースホルダと差し替え
+								// クリックイベントも設定
+								// swap place-holder and thumbnail image
+								// setup event(click)
+								img.detach().click(c_eve).fadeTo(500,1);
+								p_holder.fadeTo("fast", 0, function() {
+									// プレースホルダは役目を終えました
+									// remove place-holder
+									p_holder.replaceWith(img)
+											.remove();
+								});
+							});
+						})();
+					}
 					
-					// まずはプレースホルダを配置
-					// prepare place-holder
-					var p_holder = self.item.loading_rect.clone();
-					p_holder.fadeTo(0,1).appendTo(tbar);
-					img.load(function() {
-						// サムネイルプレースホルダと差し替え
-						// クリックイベントも設定
-						// swap place-holder and thumbnail image
-						// setup event(click)
-						img.detach().click(c_eve).fadeTo(500,1);
-						p_holder.fadeTo("fast", 0, function() {
-							// プレースホルダは役目を終えました
-							// remove place-holder
-							p_holder.replaceWith(img)
-									.remove();
-						});
-					});
-				})();
-			}
-			
-			// 無選択状態にする
-			// set as no thumbnail is selected
-			_refreshPic(-1);
-			
-			ttext = g.title.length>0 ? g.title : groupName;
-		}
-		// サムネイルタイトルを反映 apply thumbnail group title
-		ttitle.fadeTo(0, 0).text(ttext).fadeTo("slow", 1);			
-		tbar.slideDown("fast", function() {});
-	});
+					// 無選択状態にする
+					// set as no thumbnail is selected
+					_refreshPic(-1, false);
+					
+					ttext = g.title.length>0 ? g.title : groupName;
+				}
+				// サムネイルタイトルを反映 apply thumbnail group title
+				ttitle.fadeTo(0, 0).text(ttext).fadeTo("slow", 1);			
+				tbar.slideDown("fast", function() {});
+		});
     }
 	/// 詳細画像の更新 refresh picture
-	function _refreshPic(imageIdx) {
+	function _refreshPic(imageIdx, bForce) {
 		var gname = self.active.name;
 		var pic = self.item.pic;
 		// 負数は非表示を意味する
@@ -349,8 +382,8 @@ function ScGallery(phpPath, groupPath, baseDOM) {
 			self.active.thumb = null;
 		} else {
 			var g = self.groups[gname];
-			imageIdx = Clamp(imageIdx, 0, g.length-1);
-			if(imageIdx != self.active.id) {
+			imageIdx = Clamp(imageIdx, 0, g.files.length-1);
+			if(bForce || imageIdx != self.active.id) {
 				self.active.id = imageIdx;
 				self.active.thumb = self.item.tbar.find(".slc_ThumbBox").eq(imageIdx);
 				_adjSelector();
@@ -422,7 +455,7 @@ function ScGallery(phpPath, groupPath, baseDOM) {
 		if(mvtype === "relative") {
 			idx += act.id;
 		} else if(mvtype === "absolute") {}
-		_refreshPic(idx);
+		_refreshPic(idx, false);
 	}
 }
 

@@ -118,12 +118,12 @@
 /* 等倍表示 */
 .slc_Noscale {
 	top: 340px;
-	left: 10px;
+	left: 20px;
 }
 /* フィット表示 */
 .slc_Fit {
 	top: 340px;
-	left: 60px;
+	left: 20px;
 }
 
 .slc_ThumbPanel {
