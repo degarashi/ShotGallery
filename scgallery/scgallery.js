@@ -7,32 +7,33 @@ function Clamp(val, vmin, vmax) {
 	return val;
 }
 
-// イメージのロードが終わるまでポーリングして待つ
-// wait for loading image (polling)
-function WaitForLoad(img, intv, cf) {
-	var i_id = window.setInterval(function(){
-		var w = parseInt(img.css("width")),
-			h = parseInt(img.css("height"));
-		if(w>0 && h>0) {
-			cf(img, w, h);
-			window.clearInterval(i_id);
-		}	
-	}, intv);
-}
-// イメージのロードが終わったらparentObjの中央に配置する
-// wait for loading image (polling) and centering
-function WaitForLoadCentering(img, intv, parentObj, cf) {
-	WaitForLoad(img, intv, function(img, w, h) {
-		var posx = parseInt(parentObj.css("width"))/2 - w/2,
-			posy = parseInt(parentObj.css("height"))/2 - h/2;
-		img.css({
-			position: "absolute",
-			left: posx + "px",
-			top: posy + "px"
-		});
-		if(cf !== undefined)
-			cf();
-	});			
+// イメージを親領域の中央に配置する
+// place image object at center of parent
+function Centering(img, parentObj, bScale) {
+	var cx = parseInt(parentObj.css("width")),
+		cy = parseInt(parentObj.css("height"));
+	var w = parseInt(img.css("width")),
+		h = parseInt(img.css("height"));
+	if(bScale) {
+		if(w>=cx || h>=cy) {}
+		else {
+			var scale = cx / w;
+			if(h*scale >= cy)
+				scale = Math.min(scale, cy/h);
+			w *= scale;
+			h *= scale;
+		}
+	}
+
+	var posx = cx/2 - w/2,
+		posy = cy/2 - h/2;
+	img.css({
+		position: "absolute",
+		left: posx + "px",
+		top: posy + "px",
+		width: w + "px",
+		height: h + "px"
+	});
 }
 
 /// ScreenShot Gallery
@@ -43,6 +44,7 @@ function WaitForLoadCentering(img, intv, parentObj, cf) {
  * basePath (image folder's root path) [string]
  * docDir (PHP program directory for file enumeration) [string]
  * groups (folder / file list) [table]
+ * bScaling (enable scaling if image is smaller than box) [bool]
  * item [table]
  *	dbox (detail box) [jQ]
  *	pic (picture box) [jQ]
@@ -84,6 +86,7 @@ function ScGallery(phpPath, groupPath, baseDOM) {
 	this.groupPath = groupPath;
 	this.capCounter = 0;
 	this.bDeclCap = true;
+	this.bScaling = true;
 	
 	this.active = {
 		name: null,
@@ -145,19 +148,24 @@ function ScGallery(phpPath, groupPath, baseDOM) {
 	
     /// ディティールウィンドウに出すローディングアイコンを初期化 initialize Large-LoadingIcon for detail-window
     function _initLoadingIcon() {
-	var img = $("<img>", {"src": "icon/loading.gif"});
-	var divLoad = self.item.loading
-				.append(img)
-				.fadeOut(0);
+    	var img = $("<img>", {"alt": "loading-icon"});
+ 	var divLoad = self.item.loading
+ 				.css("visibility", "hidden")
+				.append(img);
 	var db = self.item.dbox;
+	
 	// 読み込みが終わったらparentObj領域の中央にオブジェクトを配置
 	// place "LoadingIcon" at center when image object ready
-	WaitForLoadCentering(img, 10, divLoad, function(){
+	img.load(function() {
+		Centering(img, divLoad, false);
 		var posx = parseInt(db.css("width"))/2 - parseInt(divLoad.css("width"))/2,
 			posy = parseInt(db.css("height"))/2 - parseInt(divLoad.css("height"))/2;
 		divLoad.css("left", posx+"px")
-				.css("top", posy+"px");
-	});
+			.css("top", posy+"px")
+			.fadeOut(0)
+			.css("visibility", "visible");
+	})
+	.attr("src", "icon/loading.gif");
     }
 
     /// サムネイル枠と、中心で回るくるくる画像 initialize Small-LoadingIcon for thumbnail
@@ -172,7 +180,9 @@ function ScGallery(phpPath, groupPath, baseDOM) {
 	});
 	self.item.loading_rect = divLS.append(img);
 	divLS.fadeTo(0,0).appendTo(self.item.dummy);
-	WaitForLoadCentering(img, 10, divLS);
+	img.load(function() {
+		Centering(img, divLS, false);
+	});
     }
 	
     /// グループセレクタを用意 initialize group selector
@@ -300,7 +310,7 @@ function ScGallery(phpPath, groupPath, baseDOM) {
 					// prepare place-holder
 					var p_holder = self.item.loading_rect.clone();
 					p_holder.fadeTo(0,1).appendTo(tbar);
-					WaitForLoad(img, 100, function(img, w, h) {
+					img.load(function() {
 						// サムネイルプレースホルダと差し替え
 						// クリックイベントも設定
 						// swap place-holder and thumbnail image
@@ -354,15 +364,15 @@ function ScGallery(phpPath, groupPath, baseDOM) {
 					// swap image source and centering
 					var fInfo = g.files[imageIdx];
 					pic.attr("src", "")
-						.attr("src", _makePath(fInfo.image));
-	
-					WaitForLoadCentering(pic, 100, self.item.dbox, function() {
-						loading.fadeOut("normal");
-						// フェードイン
-						// fadein next image
-						pic.fadeTo("fast", 1);
-					});
-	
+						.css("width", "").css("height", "")
+						.load(function() {
+							Centering(pic, self.item.dbox, self.bScaling);
+							loading.fadeOut("normal");
+							// フェードイン
+							// fadein next image
+							pic.fadeTo("fast", 1);
+						})
+						.attr("src", _makePath(fInfo.image));	
 					// コメントを設定
 					// set image's comment (if available)
 					_setComment(fInfo.caption, fInfo.comment);

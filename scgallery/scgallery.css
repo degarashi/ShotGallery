@@ -74,6 +74,11 @@
 	border-radius: 12px;
 }
 
+.slc_SVG {
+	width: 128px;
+	height: 128px;
+	overflow: hidden;
+}
 .slc_PN, .slc_SC {
 	position:absolute;
 	background-color: #000;
