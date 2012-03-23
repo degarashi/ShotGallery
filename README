@@ -20,9 +20,9 @@ Directory tree:
   - scgallery.html		the HTML that imports screenshot gallery
   - scgallery.css		CSS for scgallery.html
   - scgallery.js		main program
-  - loading.gif			loading icon
-  - loading_s.gif		loading icon for thumbnail window
   - components.html		screenshot gallery's layout
+  - icon/			icon files
+    ...
 - my_images/			group root folder(any name)
   - my_group/			group directory(any name)
     - _low/			thumbnail folder(folder name should '_low')

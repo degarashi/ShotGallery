@@ -19,9 +19,9 @@ http://www40.atpages.jp/~slice/scgallery/
   - scgallery.html		本プログラムを表示するhtmlページ
   - scgallery.css		scgallery.htmlのCSS
   - scgallery.js		スクリーンショットプログラム本体
-  - loading.gif			ローディング画像
-  - loading_s.gif		サムネイル用ローディング画像
   - components.html		レイアウト構成
+  - icon/			アイコンフォルダ
+    ...
 - my_images/			グループフォルダ(ルート.名前は任意)
   - my_group/			グループフォルダ(名前は任意)
     - _low/			サムネイル画像フォルダ(_lowという名前で固定)

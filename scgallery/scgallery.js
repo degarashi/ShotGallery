@@ -145,7 +145,7 @@ function ScGallery(phpPath, groupPath, baseDOM) {
 	
     /// ディティールウィンドウに出すローディングアイコンを初期化 initialize Large-LoadingIcon for detail-window
     function _initLoadingIcon() {
-	var img = $("<img>", {"src": "loading.gif"});
+	var img = $("<img>", {"src": "icon/loading.gif"});
 	var divLoad = self.item.loading
 				.append(img)
 				.fadeOut(0);
@@ -163,7 +163,7 @@ function ScGallery(phpPath, groupPath, baseDOM) {
     /// サムネイル枠と、中心で回るくるくる画像 initialize Small-LoadingIcon for thumbnail
     function _initLoadingRect() {
 	var img = $("<img>", {
-		"src": "loading_s.gif",
+		"src": "icon/loading_s.gif",
 		 "class": "slc_Loading_s"
 	});
 	var divLS = $("<div>", {
