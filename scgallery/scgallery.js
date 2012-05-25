@@ -266,23 +266,23 @@ function ScGallery(phpPath, groupPath, baseDOM) {
 		});
 		// 「等倍表示」
 		// disable zoom
-		dom.find(".slc_Noscale > .slc_click").click(function() {
+		dom.find(".slc_Noscale > .slc_click").mousedown(function() {
 			_switchScaling(false);
 		});
 		// 「拡大表示」
 		// enable zoom
-		dom.find(".slc_Fit > .slc_click").click(function() {
+		dom.find(".slc_Fit > .slc_click").mousedown(function() {
 			_switchScaling(true);
 		});
 		// 「前へ」
 		// previous picture
-		dom.find(".slc_Prev > .slc_click").click(function() {
+		dom.find(".slc_Prev > .slc_click").mousedown(function() {
 			if(self.active.id > 0)
 				show("relative", -1);
 		});
 		// 「次へ」
 		// next picture
-		dom.find(".slc_Next > .slc_click").click(function(){
+		dom.find(".slc_Next > .slc_click").mousedown(function(){
 			show("relative", 1);
 		});
 		// サムネイルグループが切り替えられたら次のを読み込む
@@ -348,7 +348,7 @@ function ScGallery(phpPath, groupPath, baseDOM) {
 								// クリックイベントも設定
 								// swap place-holder and thumbnail image
 								// setup event(click)
-								img.detach().click(c_eve).fadeTo(500,1);
+								img.detach().mousedown(c_eve).fadeTo(500,1);
 								p_holder.fadeTo("fast", 0, function() {
 									// プレースホルダは役目を終えました
 									// remove place-holder
